@@ -221,3 +221,12 @@ Caused by: org.eclipse.lsp4j.jsonrpc.ResponseErrorException: The request (id: 46
 
 !ENTRY org.springframework.tooling.boot.ls 1 0 2023-08-15 00:02:19.734
 !MESSAGE Classpath changed for project: dscatalog
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2023-08-15 00:14:57.932
+!MESSAGE Classpath changed for project: dscatalog
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2023-08-15 00:24:14.344
+!MESSAGE Classpath changed for project: dscatalog
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2023-08-15 00:24:42.240
+!MESSAGE Classpath changed for project: dscatalog

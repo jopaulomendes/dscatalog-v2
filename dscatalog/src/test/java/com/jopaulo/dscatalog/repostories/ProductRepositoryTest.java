@@ -33,7 +33,6 @@ public class ProductRepositoryTest {
 	public void saveShouldPersistewithAutoIncrementWhenIdIssNull() {
 		Product product = Factory.createProduct();
 		product.setId(null);
-		
 		product = repository.save(product);
 		
 		Assertions.assertNotNull(product.getId());
@@ -43,7 +42,6 @@ public class ProductRepositoryTest {
 	@Test
 	public void deleteShouldDeleteObjectWhenIdExists() {
 		repository.deleteById(exitingId);
-		
 		Optional<Product> result = repository.findById(exitingId);
 		Assertions.assertFalse(result.isPresent());
 	}

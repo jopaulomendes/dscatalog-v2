@@ -16,6 +16,7 @@ import com.jopaulo.dscatalog.tests.Factory;
 public class ProductRepositoryTest {
 	
 	private long exitingId;
+	private long noExitingId;
 	private long countTotalProducts;
 	
 	@Autowired
@@ -24,6 +25,7 @@ public class ProductRepositoryTest {
 	@BeforeEach
 	void serUp() throws Exception {
 		exitingId = 1L;
+		noExitingId = 100L;
 		countTotalProducts = 25L;
 	}
 	
@@ -45,4 +47,23 @@ public class ProductRepositoryTest {
 		Optional<Product> result = repository.findById(exitingId);
 		Assertions.assertFalse(result.isPresent());
 	}
+	
+	@Test
+	public void findByIdShoulReturnNonEmptyoptionalWhenIdExists() {
+		Optional<Product> result =  repository.findById(exitingId);
+		Assertions.assertTrue(result.isPresent());
+		
+	}
+	
+	@Test
+	public void findByIdShoulReturnEmptyoptionalWhenIdNotExists() {
+		Optional<Product> result =  repository.findById(noExitingId);
+		Assertions.assertTrue(result.isEmpty());
+		
+	}
+	
+	
+	
+	
+	
 }

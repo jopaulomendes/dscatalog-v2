@@ -10,11 +10,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.jopaulo.dscatalog.entities.Product;
 import com.jopaulo.dscatalog.repositories.ProductRepository;
+import com.jopaulo.dscatalog.tests.Factory;
 
 @DataJpaTest
 public class ProductRepositoryTest {
 	
 	private long exitingId;
+	private long countTotalProducts;
 	
 	@Autowired
 	private ProductRepository repository;
@@ -22,6 +24,18 @@ public class ProductRepositoryTest {
 	@BeforeEach
 	void serUp() throws Exception {
 		exitingId = 1L;
+		countTotalProducts = 25L;
+	}
+	
+	@Test
+	public void saveShouldPersistewithAutoIncrementWhenIdIssNull() {
+		Product product = Factory.createProduct();
+		product.setId(null);
+		
+		product = repository.save(product);
+		
+		Assertions.assertNotNull(product.getId());
+		Assertions.assertEquals(countTotalProducts + 1, product.getId());
 	}
 
 	@Test

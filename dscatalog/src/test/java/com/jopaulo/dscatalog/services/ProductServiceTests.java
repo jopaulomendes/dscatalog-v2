@@ -3,6 +3,7 @@ package com.jopaulo.dscatalog.services;
 import static org.mockito.Mockito.times;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,11 @@ public class ProductServiceTests {
 		Mockito.when(repository.existsById(dependenceID)).thenReturn(true);
 		
 		Mockito.when(repository.findAll((Pageable)ArgumentMatchers.any())).thenReturn(page);
+		
+		Mockito.when(repository.save(ArgumentMatchers.any())).thenReturn(product);
+		
+		Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(product));
+		Mockito.when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
 
 	}
 	

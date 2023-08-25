@@ -2,19 +2,29 @@ package com.jopaulo.dscatalog.services;
 
 import static org.mockito.Mockito.times;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.jopaulo.dscatalog.dto.ProductDTO;
+import com.jopaulo.dscatalog.entities.Product;
 import com.jopaulo.dscatalog.repositories.ProductRepository;
 import com.jopaulo.dscatalog.services.exceptions.DatabaseException;
 import com.jopaulo.dscatalog.services.exceptions.ResourceNotFoundException;
+import com.jopaulo.dscatalog.tests.Factory;
 
 @ExtendWith(SpringExtension.class)
 public class ProductServiceTests {
@@ -28,20 +38,36 @@ public class ProductServiceTests {
 	private long existingId;
 	private long nonExistingId;
 	private long dependenceID;
+	private Product product;
+	private PageImpl<Product> page;
 	
 	@BeforeEach
 	void serUp() throws Exception {
 		existingId = 1L;
-		nonExistingId = 1000L;
+		nonExistingId = 2L;
 		dependenceID = 3L;
+		product = Factory.createProduct();
+		page = new PageImpl<>(List.of(product));
 		
-		Mockito.doNothing().when(repository).deleteById(existingId);
+//		Mockito.doNothing().when(repository).deleteById(existingId);
 		Mockito.doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependenceID);
 		
 		Mockito.when(repository.existsById(existingId)).thenReturn(true);
 		Mockito.when(repository.existsById(nonExistingId)).thenReturn(false);
 		Mockito.when(repository.existsById(dependenceID)).thenReturn(true);
+		
+		Mockito.when(repository.findAll((Pageable)ArgumentMatchers.any())).thenReturn(page);
 
+	}
+	
+	@Test
+	public void findAllPagedShouldReturnPage() {
+		Pageable pageable = PageRequest.of(0, 10);
+		
+		Page<ProductDTO> result = service.findAllPage(pageable);
+		
+		Assertions.assertNotNull(result);
+		Mockito.verify(repository).findAll(pageable);
 	}
 	
 	@Test

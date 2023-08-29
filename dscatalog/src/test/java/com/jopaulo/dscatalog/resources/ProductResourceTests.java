@@ -2,6 +2,8 @@ package com.jopaulo.dscatalog.resources;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jopaulo.dscatalog.dto.ProductDTO;
 import com.jopaulo.dscatalog.services.ProductService;
+import com.jopaulo.dscatalog.services.exceptions.DatabaseException;
 import com.jopaulo.dscatalog.services.exceptions.ResourceNotFoundException;
 import com.jopaulo.dscatalog.tests.Factory;
 
@@ -57,15 +60,15 @@ public class ProductResourceTests {
 
 		when(service.findById(existingId)).thenReturn(productDTO);
 		when(service.findById(nonExistingId)).thenThrow(ResourceNotFoundException.class);
-//
+
 //		when(service.insert(any())).thenReturn(productDTO);
-//		
+	
 		when(service.update(eq(existingId), any())).thenReturn(productDTO);
 		when(service.update(eq(nonExistingId), any())).thenThrow(ResourceNotFoundException.class);
-//		
-//		doNothing().when(service).delete(existingId);
-//		doThrow(ResourceNotFoundException.class).when(service).delete(nonExistingId);
-//		doThrow(DatabaseException.class).when(service).delete(dependentId);
+		
+		doNothing().when(service).delete(existingId);
+		doThrow(ResourceNotFoundException.class).when(service).delete(nonExistingId);
+		doThrow(DatabaseException.class).when(service).delete(dependentId);
 	}
 	
 	@Test

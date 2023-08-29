@@ -10,12 +10,16 @@ public class Factory {
 
 	public static Product createProduct() {
 		Product product = new Product(1L, "Smartphone", "Xioame Poco 5s", 1200.00, "imagem", Instant.parse("2020-07-13T20:50:07.123450Z"));
-		product.getCategories().add(new Category(2L, "Eletrônicos"));
+		product.getCategories().add(createCategory());
 		return product;
 	}
 	
-	public static ProductDTO createDto() {
+	public static ProductDTO createProductDto() {
 		Product product = createProduct();
 		return new ProductDTO(product, product.getCategories());
+	}
+	
+	public static Category createCategory() {
+		return new Category(2L, "Eletrônicos");
 	}
 }

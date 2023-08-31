@@ -55,7 +55,7 @@ public class ProductResourceTests {
 		nonExistingId = 2L;
 		dependentId = 3L;
 		
-		productDTO = Factory.createProductDto();
+		productDTO = Factory.createProductDTO();
 		page = new PageImpl<>(List.of(productDTO));
 		
 		when(service.findAllPage(any())).thenReturn(page);

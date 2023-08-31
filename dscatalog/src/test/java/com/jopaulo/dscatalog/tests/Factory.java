@@ -9,12 +9,12 @@ import com.jopaulo.dscatalog.entities.Product;
 public class Factory {
 
 	public static Product createProduct() {
-		Product product = new Product(1L, "Smartphone", "Xioame Poco 5s", 1200.00, "imagem", Instant.parse("2020-07-13T20:50:07.123450Z"));
-		product.getCategories().add(createCategory());
+		Product product = new Product(1L, "Phone", "Phone", 800.0, "https://img.com/img.png", Instant.parse("2020-10-20T03:00:00Z"));
+		product.getCategories().add(new Category(1L, "Electronics"));
 		return product;
 	}
 	
-	public static ProductDTO createProductDto() {
+	public static ProductDTO createProductDTO() {
 		Product product = createProduct();
 		return new ProductDTO(product, product.getCategories());
 	}

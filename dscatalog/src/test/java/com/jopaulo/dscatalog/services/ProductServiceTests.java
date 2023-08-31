@@ -59,7 +59,7 @@ public class ProductServiceTests {
 		dependenceID = 3L;
 		product = Factory.createProduct();
 		category = Factory.createCategory();
-		productDTO = Factory.createProductDto();
+		productDTO = Factory.createProductDTO();
 		page = new PageImpl<>(List.of(product));
 		
 //		Mockito.doNothing().when(repository).deleteById(existingId);

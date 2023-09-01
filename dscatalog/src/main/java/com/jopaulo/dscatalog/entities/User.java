@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,12 +23,12 @@ public class User implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String fistName;
+	private String firstName;
 	private String lastName;
 	private String email;
 	private String password;
 	
-	@ManyToMany
+	@ManyToMany (fetch = FetchType.EAGER) // sempre que buscar um usuário, força que carregue suas roles
 	@JoinTable(
 		name = "tb_user_role",
 		joinColumns = @JoinColumn(name = "user_id"),
@@ -37,10 +38,10 @@ public class User implements Serializable{
 	public User() {
 	}
 
-	public User(Long id, String fistName, String lastName, String email, String password) {
+	public User(Long id, String firstName, String lastName, String email, String password) {
 		super();
 		this.id = id;
-		this.fistName = fistName;
+		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
@@ -54,12 +55,12 @@ public class User implements Serializable{
 		this.id = id;
 	}
 
-	public String getFistName() {
-		return fistName;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFistName(String fistName) {
-		this.fistName = fistName;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	public String getLastName() {

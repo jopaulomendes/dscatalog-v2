@@ -1,6 +1,5 @@
 package com.jopaulo.dscatalog.entities;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;

@@ -15,6 +15,7 @@ import com.jopaulo.dscatalog.dto.CategoryDTO;
 import com.jopaulo.dscatalog.dto.RoleDTO;
 import com.jopaulo.dscatalog.dto.UserDTO;
 import com.jopaulo.dscatalog.dto.UserInsertDTO;
+import com.jopaulo.dscatalog.dto.UserUpdatetDTO;
 import com.jopaulo.dscatalog.entities.Category;
 import com.jopaulo.dscatalog.entities.Role;
 import com.jopaulo.dscatalog.entities.User;
@@ -61,7 +62,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public UserDTO update(Long id, UserDTO dto) {
+	public UserDTO update(Long id, UserUpdatetDTO dto) {
 		try {
 			User entity = repository.getReferenceById(id);
 			copyDtoEntity(dto, entity);

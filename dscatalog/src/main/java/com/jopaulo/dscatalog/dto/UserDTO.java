@@ -9,18 +9,22 @@ import com.jopaulo.dscatalog.entities.User;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class UserDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	@NotBlank(message = "Nome obrigatório")
+	@Size(min = 3, message = "O nome do usuário deve ter no mínimo 3 caracteres")
+	@Size(max = 50, message = "O nome do produto deve ter no máximno 50 caracteres")
 	private String firstName;
+	@Size(min = 3, message = "O sobrenome do usuário deve ter no mínimo 3 caracteres")
+	@Size(max = 50, message = "O nome do produto deve ter no máximno 50 caracteres")
 	@NotBlank(message = "Sobrenome obrigatório")
 	private String lastName;
 	@NotBlank(message = "e-mail")
 	@Email(message = "E-mail inválido")
-	@Column(unique = true)
 	private String email;
 	
 	Set<RoleDTO> roles = new HashSet<>();

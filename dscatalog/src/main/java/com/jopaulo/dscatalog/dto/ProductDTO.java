@@ -18,10 +18,12 @@ public class ProductDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	@Size(min = 5, message = "O nome do produto deve ter no mínimo 5 caracteres")
+	@NotBlank(message = "Nome obrigatório")
+	@Size(min = 3, message = "O nome do produto deve ter no mínimo 3 caracteres")
 	@Size(max = 50, message = "O nome do produto deve ter no máximno 50 caracteres")
 	@NotBlank(message = "Nome obrigatório")
 	private String name;
+	@NotBlank(message = "Descrição obrigatório")
 	private String description;
 	@Positive(message = "O preço deve ter um valor maior que 0 (zero)")
 	private Double price;

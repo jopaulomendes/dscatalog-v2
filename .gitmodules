@@ -1,7 +1,7 @@
 [submodule "event-city-tdd"]
 	path = event-city-tdd
-	url = https://github.com/jopaulomendes/event-city-tdd.git
+	url = https://github.com/jopaulomendes/dscatalog-v2/tree/master/event-city-tdd.git
 
 [submodule "spring-boot-3-1-0-noauth"]
     path = spring-boot-3-1-0-noauth
-    url = https://github.com/jopaulomendes/spring-boot-3-1-0-noauth.git
+    url = https://github.com/jopaulomendes/dscatalog-v2/tree/master/spring-boot-3-1-0-noauth.git

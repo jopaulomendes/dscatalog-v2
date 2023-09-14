@@ -1,10 +1,11 @@
 package com.jopaulo.dscatalog.entities;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import com.jopaulo.dscatalog.projections.idProjection;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,8 +19,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_product")
-public class Product implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class Product implements idProjection<Long>{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +51,7 @@ public class Product implements Serializable{
 		this.date = date;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

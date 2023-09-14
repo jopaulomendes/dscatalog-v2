@@ -5,23 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.jopaulo.dscatalog.entities.Product;
-import com.jopaulo.dscatalog.projections.ProductProjection;
+import com.jopaulo.dscatalog.projections.idProjection;
 
 public class Utils {
 
-	public static List<Product> replace(List<ProductProjection> ordered, List<Product> unordered) {
-		
-		Map<Long, Product> map = new HashMap<>();
-		for (Product product : unordered) {
-			map.put(product.getId(), product);
+	public static <ID> List<? extends idProjection<ID>> replace(List<? extends idProjection<ID>> ordered,
+			List<? extends idProjection<ID>> unordered) {
+
+		Map<ID, idProjection<ID>> map = new HashMap<>();
+		for (idProjection<ID> obj : unordered) {
+			map.put(obj.getId(), obj);
 		}
-		
-		List<Product> result = new ArrayList<>();
-		for (ProductProjection productProjection : ordered) {
-			result.add(map.get(productProjection.getId()));
+
+		List<idProjection<ID>> result = new ArrayList<>();
+		for (idProjection<ID> obj : ordered) {
+			result.add(map.get(obj.getId()));
 		}
-		
+
 		return result;
 	}
 

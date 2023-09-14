@@ -94,6 +94,7 @@ public class ProductService {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public Page<ProductDTO> testQuery(String name, String categoryId, Pageable pageable) {
 		
@@ -106,7 +107,7 @@ public class ProductService {
 		List<Long> productsIds = page.stream().map(x -> x.getId()).toList();
 		
 		List<Product> entities = repository.searchProductsWithCategories(productsIds);
-		entities = Utils.replace(page.getContent(), entities); //resultado ordenado
+		entities = (List<Product>) Utils.replace(page.getContent(), entities); //resultado ordenado
 		List<ProductDTO> dtos = entities.stream().map(x -> new ProductDTO(x, x.getCategories())).toList();
 		
 		Page<ProductDTO> pageDto = new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());

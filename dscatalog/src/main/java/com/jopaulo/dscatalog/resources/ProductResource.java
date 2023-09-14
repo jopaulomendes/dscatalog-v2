@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.jopaulo.dscatalog.dto.ProductDTO;
+import com.jopaulo.dscatalog.projections.ProductProjection;
 import com.jopaulo.dscatalog.services.ProductService;
 
 import jakarta.validation.Valid;
@@ -28,12 +29,18 @@ public class ProductResource {
 
 	@Autowired
 	private ProductService service;
-
+	
 	@GetMapping
-	public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
-		Page<ProductDTO> list = service.findAllPage(pageable);
+	public ResponseEntity<Page<ProductProjection>> findAll(Pageable pageable) {
+		Page<ProductProjection> list = service.testQuery(pageable);
 		return ResponseEntity.ok().body(list);
 	}
+
+//	@GetMapping
+//	public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
+//		Page<ProductDTO> list = service.findAllPage(pageable);
+//		return ResponseEntity.ok().body(list);
+//	}
 
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {

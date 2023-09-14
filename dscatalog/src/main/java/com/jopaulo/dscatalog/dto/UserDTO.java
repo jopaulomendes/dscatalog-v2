@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.jopaulo.dscatalog.entities.User;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

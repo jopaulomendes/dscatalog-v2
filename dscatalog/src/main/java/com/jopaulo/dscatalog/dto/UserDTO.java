@@ -10,8 +10,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+@SuppressWarnings("serial")
 public class UserDTO implements Serializable{
-	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	@NotBlank(message = "Nome obrigatório")

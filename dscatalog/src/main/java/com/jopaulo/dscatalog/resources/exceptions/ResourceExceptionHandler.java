@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.jopaulo.dscatalog.services.exceptions.DatabaseException;
+import com.jopaulo.dscatalog.services.exceptions.EmailException;
 import com.jopaulo.dscatalog.services.exceptions.ResourceNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,6 +56,18 @@ public class ResourceExceptionHandler {
 			error.addError(fieldError.getField(), fieldError.getDefaultMessage());
 		}
 		
+		return ResponseEntity.status(status).body(error);
+	}
+	
+	@ExceptionHandler(EmailException.class)
+	public ResponseEntity<StandardError> email(EmailException e, HttpServletRequest request){
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		StandardError error = new StandardError();
+		error.setTimestamp(Instant.now());
+		error.setStatus(status.value());
+		error.setError("Exceção de E-mail");
+		error.setMessage(e.getMessage());
+		error.setPath(request.getRequestURI());
 		return ResponseEntity.status(status).body(error);
 	}
 }

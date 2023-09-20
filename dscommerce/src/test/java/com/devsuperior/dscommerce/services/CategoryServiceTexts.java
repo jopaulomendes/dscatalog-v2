@@ -18,7 +18,7 @@ import com.devsuperior.dscommerce.repositories.CategoryRepository;
 import com.devsuperior.dscommerce.tests.CategoryFactory;
 
 @ExtendWith(SpringExtension.class)
-public class CategoryRepositoryTexts {
+public class CategoryServiceTexts {
 
 	@InjectMocks
 	private CategoryService service;

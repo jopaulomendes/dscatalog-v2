@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.devsuperior.dscommerce.dto.UserDTO;
 import com.devsuperior.dscommerce.entities.User;
 import com.devsuperior.dscommerce.projections.UserDetailsProjection;
 import com.devsuperior.dscommerce.repositories.UserRepository;
@@ -72,7 +73,6 @@ public class UserServiceTests {
 	@Test
 	public void authenticateShoulreturnUserWhenUserExists() {
 		Mockito.when(customUserUtil.getLoggedUserName()).thenReturn(existUserName);
-
 		User result = service.authenticated();
 
 		Assertions.assertNotNull(result);
@@ -82,9 +82,30 @@ public class UserServiceTests {
 	@Test
 	public void authenticateThromUsernameNotFoundExceptionWhenUserDoesNotExists() {
 		Mockito.doThrow(ClassCastException.class).when(customUserUtil).getLoggedUserName();
-
 		Assertions.assertThrows(UsernameNotFoundException.class, () -> {
 			service.authenticated();
+		});
+	}
+	
+	@Test
+	public void getMeShouldReturnUserDTOWhenUserAuthenticatd() {
+		UserService spyUserService = Mockito.spy(service);
+		Mockito.doReturn(user).when(spyUserService).authenticated();
+		
+		UserDTO result = spyUserService.getMe();
+		
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(result.getEmail(), existUserName);
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void getMeShouldThremUsernameNotFoundExceptionWhenUserNotAuthenticated() {
+		UserService spyUserService = Mockito.spy(service);
+		Mockito.doThrow(UsernameNotFoundException.class).when(spyUserService).authenticated();
+		
+		Assertions.assertThrows(UsernameNotFoundException.class, () -> {
+			UserDTO result = spyUserService.getMe();
 		});
 	}
 }

@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.devsuperior.dscommerce.dto.OrderDTO;
 import com.devsuperior.dscommerce.entities.Order;
+import com.devsuperior.dscommerce.entities.OrderItem;
 import com.devsuperior.dscommerce.entities.Product;
 import com.devsuperior.dscommerce.entities.User;
 import com.devsuperior.dscommerce.repositories.OrderItemRepository;
@@ -138,12 +139,10 @@ public class OrderServiceTests {
 	@Test
 	public void insertShouldReturnOrderDTOWhenClientLogged() {
 		Mockito.when(userService.authenticated()).thenReturn(client);
+		
+		OrderDTO result = service.insert(orderDTO);
 
-		order.setClient(new User());
-		orderDTO = new OrderDTO(order);
-
-		Assertions.assertNotNull(orderDTO);
-		Assertions.assertEquals(orderDTO.getId(), existngOrderId);
+		Assertions.assertNotNull(result);
 	}
 	
 	@SuppressWarnings("unused")
@@ -155,6 +154,22 @@ public class OrderServiceTests {
 		orderDTO = new OrderDTO(order);
 
 		Assertions.assertThrows(UsernameNotFoundException.class, () -> {
+			OrderDTO result = service.insert(orderDTO);
+		});
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void insertShouldThrosEntityNotFoundExceptionWhenOrderProductIdDoesNortExists() {
+		Mockito.when(userService.authenticated()).thenReturn(client);
+
+		product.setId(nonExistingProductId);
+		OrderItem orderItem = new OrderItem(order, product, 2, 10.0);
+		order.getItems().add(orderItem);
+		
+		orderDTO = new OrderDTO(order);
+		
+		Assertions.assertThrows(EntityNotFoundException.class, () -> {
 			OrderDTO result = service.insert(orderDTO);
 		});
 	}

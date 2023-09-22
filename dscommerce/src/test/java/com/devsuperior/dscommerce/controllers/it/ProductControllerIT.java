@@ -1,6 +1,7 @@
 package com.devsuperior.dscommerce.controllers.it;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,7 +23,7 @@ public class ProductControllerIT {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private String productName;
+	private String productName, token;
 
 	@BeforeEach
 	void setup() {
@@ -53,5 +54,15 @@ public class ProductControllerIT {
 		result.andExpect(jsonPath("$.content[0].price").value(90.5));
 		result.andExpect(jsonPath("$.content[0].imgUrl").value(
 				"https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"));
+	}
+	
+	@Test
+	public void insertShouldReturnPDTOCreatedWhenAdminLogged() throws Exception{
+		String jsonBody = "";
+		ResultActions result = mockMvc
+				.perform(post("/products")
+						.header("Authorization", "Bearer " + token)
+						.content(jsonBody)
+						.accept(MediaType.APPLICATION_JSON));
 	}
 }

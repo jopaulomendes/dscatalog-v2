@@ -15,6 +15,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.devsuperior.dscommerce.dto.ProductDTO;
+import com.devsuperior.dscommerce.entities.Product;
+import com.devsuperior.dscommerce.tests.TokenUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -22,12 +27,32 @@ public class ProductControllerIT {
 
 	@Autowired
 	private MockMvc mockMvc;
+	
+	@Autowired
+	private TokenUtil tokenUtil;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
-	private String productName, token;
+	private String adminToken, clientToken, invalidToken;
+	private String adminUsername, clientUsername, adminPassword, clientePassword;
+	private String productName;
+	
+	private Product product;
+	private ProductDTO productDTO;
 
 	@BeforeEach
-	void setup() {
+	void setup() throws Exception {
+		adminUsername = "maria@gmail.com";
+		clientUsername = "alex@gmail.com";
+		adminPassword = "123456";
+		clientePassword = "123456";
+		
 		productName = "Macbook";
+		
+		adminToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
+		clientToken = tokenUtil.obtainAccessToken(mockMvc, clientUsername, clientePassword);
+		invalidToken = adminToken + "xpto";
 	}
 
 	@Test
@@ -58,10 +83,10 @@ public class ProductControllerIT {
 	
 	@Test
 	public void insertShouldReturnPDTOCreatedWhenAdminLogged() throws Exception{
-		String jsonBody = "";
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
 		ResultActions result = mockMvc
 				.perform(post("/products")
-						.header("Authorization", "Bearer " + token)
+						.header("Authorization", "Bearer " + adminToken)
 						.content(jsonBody)
 						.accept(MediaType.APPLICATION_JSON));
 	}

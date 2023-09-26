@@ -13,9 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.dscommerce.dto.ProductDTO;
+import com.devsuperior.dscommerce.entities.Category;
 import com.devsuperior.dscommerce.entities.Product;
 import com.devsuperior.dscommerce.tests.TokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,17 +29,17 @@ public class ProductControllerIT {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	private TokenUtil tokenUtil;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
 
 	private String adminToken, clientToken, invalidToken;
 	private String adminUsername, clientUsername, adminPassword, clientePassword;
 	private String productName;
-	
+
 	private Product product;
 	private ProductDTO productDTO;
 
@@ -47,12 +49,22 @@ public class ProductControllerIT {
 		clientUsername = "alex@gmail.com";
 		adminPassword = "123456";
 		clientePassword = "123456";
-		
+
 		productName = "Macbook";
-		
+
 		adminToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
 		clientToken = tokenUtil.obtainAccessToken(mockMvc, clientUsername, clientePassword);
 		invalidToken = adminToken + "xpto";
+
+		Category category = new Category(2L, null);
+		product = new Product(
+				null, 
+				"Console Playstation 5", 
+				"Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+				3999.90,
+				"https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg");
+		product.getCategories().add(category);
+		productDTO = new ProductDTO(product);
 	}
 
 	@Test
@@ -67,11 +79,10 @@ public class ProductControllerIT {
 		result.andExpect(jsonPath("$.content[0].imgUrl").value(
 				"https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/3-big.jpg"));
 	}
-	
+
 	@Test
 	public void findAllShouldReturnPageWhenNameParamIsEmpty() throws Exception {
-		ResultActions result = mockMvc
-				.perform(get("/products").accept(MediaType.APPLICATION_JSON));
+		ResultActions result = mockMvc.perform(get("/products").accept(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.content[0].id").value(1L));
@@ -80,14 +91,110 @@ public class ProductControllerIT {
 		result.andExpect(jsonPath("$.content[0].imgUrl").value(
 				"https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"));
 	}
-	
+
 	@Test
-	public void insertShouldReturnPDTOCreatedWhenAdminLogged() throws Exception{
+	public void insertShouldReturnPDTOCreatedWhenAdminLogged() throws Exception {
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
 		ResultActions result = mockMvc
 				.perform(post("/products")
 						.header("Authorization", "Bearer " + adminToken)
 						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+						.andDo(MockMvcResultHandlers.print());
+		
+		result.andExpect(status().isCreated());
+		result.andExpect(jsonPath("$.id").value(26L));
+		result.andExpect(jsonPath("$.name").value("Console Playstation 5"));
+		result.andExpect(jsonPath("$.description").value("Lorem ipsum, dolor sit amet consectetur adipisicing elit."));
+		result.andExpect(jsonPath("$.price").value(3999.90));
+		result.andExpect(jsonPath("$.imgUrl").value("https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"));
+		result.andExpect(jsonPath("$.categories[0].id").value(2L));
+	}
+	
+	@Test
+	public void insertShouldReturnUnprocessedEntityWhenAdminLoggedAndInvalidName() throws Exception {
+		product.setName("ab");
+		productDTO = new ProductDTO(product);
+		
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
+		ResultActions result = mockMvc
+				.perform(post("/products")
+						.header("Authorization", "Bearer " + adminToken)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void insertShouldReturnUnprocessedEntityWhenAdminLoggedAndInvalidDescription() throws Exception {
+		product.setDescription("ab");
+		productDTO = new ProductDTO(product);
+		
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
+		ResultActions result = mockMvc
+				.perform(post("/products")
+						.header("Authorization", "Bearer " + adminToken)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void insertShouldReturnUnprocessedEntityWhenAdminLoggedAndPriceNegative() throws Exception {
+		product.setPrice(-50.0);
+		productDTO = new ProductDTO(product);
+		
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
+		ResultActions result = mockMvc
+				.perform(post("/products")
+						.header("Authorization", "Bearer " + adminToken)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void insertShouldReturnUnprocessedEntityWhenAdminLoggedAndPriceIsZero() throws Exception {
+		product.setPrice(0.0);
+		productDTO = new ProductDTO(product);
+		
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
+		ResultActions result = mockMvc
+				.perform(post("/products")
+						.header("Authorization", "Bearer " + adminToken)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void insertShouldReturnUnprocessedEntityWhenAdminLoggedAndProductHasNotCategories() throws Exception {
+		product.getCategories().clear();
+		productDTO = new ProductDTO(product);
+		
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
+		ResultActions result = mockMvc
+				.perform(post("/products")
+						.header("Authorization", "Bearer " + adminToken)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isUnprocessableEntity());
 	}
 }

@@ -1,8 +1,8 @@
 package com.devsuperior.dscommerce.tests;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -10,10 +10,8 @@ import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
 
 @Component
 public class TokenUtil {
@@ -37,7 +35,7 @@ public class TokenUtil {
 						.with(httpBasic(clientId, clientSecret))
 						.accept("application/json;charset=UTF-8"))
 						.andExpect(status().isOk())
-						.andExpect((ResultMatcher) content().contentType("application/json;charset=UTF-8"));
+						.andExpect(content().contentType("application/json;charset=UTF-8"));
 
 		String resultString = result.andReturn().getResponse().getContentAsString();
 

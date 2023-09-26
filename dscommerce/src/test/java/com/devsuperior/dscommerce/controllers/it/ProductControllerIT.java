@@ -45,8 +45,8 @@ public class ProductControllerIT {
 
 	@BeforeEach
 	void setup() throws Exception {
-		adminUsername = "maria@gmail.com";
-		clientUsername = "alex@gmail.com";
+		adminUsername = "alex@gmail.com";
+		clientUsername = "maria@gmail.com";
 		adminPassword = "123456";
 		clientePassword = "123456";
 
@@ -196,5 +196,37 @@ public class ProductControllerIT {
 						.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void insertShouldReturnForbiddenWhenClientLogged() throws Exception {
+		productDTO = new ProductDTO(product);
+		
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
+		ResultActions result = mockMvc
+				.perform(post("/products")
+						.header("Authorization", "Bearer " + clientToken)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isForbidden());
+	}
+	
+	@Test
+	public void insertShouldReturnunauthorizeWhenInvalidToken() throws Exception {
+		productDTO = new ProductDTO(product);
+		
+		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		
+		ResultActions result = mockMvc
+				.perform(post("/products")
+						.header("Authorization", "Bearer " + invalidToken)
+						.content(jsonBody)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isUnauthorized());
 	}
 }

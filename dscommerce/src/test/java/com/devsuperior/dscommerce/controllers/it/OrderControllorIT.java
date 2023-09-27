@@ -84,7 +84,7 @@ public class OrderControllorIT {
 		
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.id").value(existisOrderId));
-//		result.andExpect(jsonPath("$.moment").value("2022-07"));
+		result.andExpect(jsonPath("$.moment").value("2022-07-25T13:00:00Z"));
 		result.andExpect(jsonPath("$.status").value("PAID"));
 		result.andExpect(jsonPath("$.client").exists());
 		result.andExpect(jsonPath("$.client.name").value("Maria Brown"));
@@ -104,7 +104,7 @@ public class OrderControllorIT {
 		
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.id").value(existisOrderId));
-//		result.andExpect(jsonPath("$.moment").value("2022-07"));
+		result.andExpect(jsonPath("$.moment").value("2022-07-25T13:00:00Z"));
 		result.andExpect(jsonPath("$.status").value("PAID"));
 		result.andExpect(jsonPath("$.client").exists());
 		result.andExpect(jsonPath("$.client.name").value("Maria Brown"));
@@ -157,6 +157,6 @@ public class OrderControllorIT {
 						.accept(MediaType.APPLICATION_JSON))
 						.andDo(MockMvcResultHandlers.print());
 		
-		result.andExpect(status().isNotFound());
+		result.andExpect(status().isUnauthorized());
 	}
 }

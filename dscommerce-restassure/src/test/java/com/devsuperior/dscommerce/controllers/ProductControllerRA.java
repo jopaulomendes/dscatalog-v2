@@ -14,10 +14,14 @@ import org.json.simple.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.http.HttpStatusCode;
 
+import com.devsuperior.dscommerce.tests.TokenUtil;
+
 import io.restassured.http.ContentType;
 
 public class ProductControllerRA {
 
+	private String clientUsername, clientPassword, adminUsername, adminPassword;
+	private String clientToken, adminToken, invalidToken;
 	private Long existProductId, nonExistingProductId;
 	private String productName;
 	
@@ -30,6 +34,15 @@ public class ProductControllerRA {
 	@BeforeEach
 	void setup() {
 		baseURI = "http://localhost:8080";
+		
+		clientUsername = "maria@gmail.com";
+		adminUsername = "alex@gmail.com";
+		clientPassword = "123456";
+		adminPassword = "123456";
+		
+		clientToken = TokenUtil.accessToken(clientUsername, clientPassword);
+		adminToken = TokenUtil.accessToken(adminUsername, adminPassword);
+		invalidToken = adminToken + "xpto";
 		
 		productName = "Macbook";
 		
@@ -102,7 +115,6 @@ public class ProductControllerRA {
 	@Test
 	public void insertShoultReturnProductCreatedWhenAdminLogged() {
 		JSONObject newProduct = new JSONObject(postProductInstance);
-		String adminToken = "";
 		
 		given()
 			.header("Content-Type", "application/json")
@@ -117,6 +129,6 @@ public class ProductControllerRA {
 			.body("name", equalTo("Meu produto"))
 			.body("price", is(50F))
 			.body("imgUrl", equalTo("https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"))
-			.body("categories", hasItems(2, 3));
+			.body("categories.id", hasItems(2, 3));
 	}
 }

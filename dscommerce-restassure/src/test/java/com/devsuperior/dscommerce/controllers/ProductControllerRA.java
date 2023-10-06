@@ -117,7 +117,7 @@ public class ProductControllerRA {
 		
 		given()
 			.header("Content-Type", "application/json")
-			.header("Authorization", "Beare " + adminToken )
+			.header("Authorization", "Bearer " + adminToken)
 			.body(newProduct)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)

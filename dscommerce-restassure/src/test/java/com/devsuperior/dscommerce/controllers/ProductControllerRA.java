@@ -1,18 +1,19 @@
 package com.devsuperior.dscommerce.controllers;
 
-import static io.restassured.RestAssured.*;
-import static io.restassured.matcher.RestAssuredMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.baseURI;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.http.HttpStatusCode;
+import org.junit.jupiter.api.Test;
 
 import com.devsuperior.dscommerce.tests.TokenUtil;
 
@@ -22,7 +23,7 @@ public class ProductControllerRA {
 
 	private String clientUsername, clientPassword, adminUsername, adminPassword;
 	private String clientToken, adminToken, invalidToken;
-	private Long existProductId, nonExistingProductId;
+	private Long existProductId, nonExistingProductId, dependentProductId;
 	private String productName;
 	
 	private Map<String, Object> postProductInstance;
@@ -36,8 +37,8 @@ public class ProductControllerRA {
 		baseURI = "http://localhost:8080";
 		
 		clientUsername = "maria@gmail.com";
-		adminUsername = "alex@gmail.com";
 		clientPassword = "123456";
+		adminUsername = "alex@gmail.com";
 		adminPassword = "123456";
 		
 		clientToken = TokenUtil.accessToken(clientUsername, clientPassword);
@@ -139,7 +140,7 @@ public class ProductControllerRA {
 		
 		given()
 			.header("Content-Type", "application/json")
-			.header("Authorization", "Beare " + adminToken )
+			.header("Authorization", "Bearer " + adminToken )
 			.body(newProduct)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
@@ -157,7 +158,7 @@ public class ProductControllerRA {
 		
 		given()
 			.header("Content-Type", "application/json")
-			.header("Authorization", "Beare " + adminToken )
+			.header("Authorization", "Bearer " + adminToken )
 			.body(newProduct)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
@@ -175,7 +176,7 @@ public class ProductControllerRA {
 		
 		given()
 			.header("Content-Type", "application/json")
-			.header("Authorization", "Beare " + adminToken )
+			.header("Authorization", "Bearer " + adminToken )
 			.body(newProduct)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
@@ -193,7 +194,7 @@ public class ProductControllerRA {
 		
 		given()
 			.header("Content-Type", "application/json")
-			.header("Authorization", "Beare " + adminToken )
+			.header("Authorization", "Bearer " + adminToken )
 			.body(newProduct)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
@@ -211,7 +212,7 @@ public class ProductControllerRA {
 		
 		given()
 			.header("Content-Type", "application/json")
-			.header("Authorization", "Beare " + adminToken )
+			.header("Authorization", "Bearer " + adminToken )
 			.body(newProduct)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
@@ -228,7 +229,7 @@ public class ProductControllerRA {
 		
 		given()
 			.header("Content-Type", "application/json")
-			.header("Authorization", "Beare " + clientToken )
+			.header("Authorization", "Bearer " + clientToken )
 			.body(newProduct)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
@@ -241,15 +242,71 @@ public class ProductControllerRA {
 	@Test
 	public void insertShoultReturnUnunthorizedWhenInvalidToken() {
 		JSONObject newProduct = new JSONObject(postProductInstance);
-		
 		given()
 			.header("Content-Type", "application/json")
-			.header("Authorization", "Beare " + invalidToken )
+			.header("Authorization", "Bearer " + invalidToken )
 			.body(newProduct)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 		.when()
 			.post("/products")
+		.then()
+			.statusCode(401);
+	}
+	
+	@Test
+	public void deleteShoultReturnNoContentWhenIdExistsAndAdminLogged() {
+		existProductId = 25L;
+		given()
+			.header("Authorization", "Bearer " + adminToken)
+		.when()
+			.delete("/products/{id}", existProductId)
+		.then()
+			.statusCode(204);
+	}
+	
+	@Test
+	public void deleteShoultReturnNotFoundWhenIdIsNotExistsAndAdminLogged() {
+		nonExistingProductId = 100L;
+		given()
+			.header("Authorization", "Bearer " + adminToken)
+		.when()
+			.delete("/products/{id}", nonExistingProductId)
+		.then()
+			.statusCode(404)
+			.body("error", equalTo("Recurso não encontrado"))
+			.body("status", equalTo(404));
+	}
+	
+	@Test
+	public void deleteShoultReturnBadRequestWhenDependentIdAndAdminLogged() {
+		dependentProductId = 3L;
+		given()
+			.header("Authorization", "Bearer " + adminToken)
+		.when()
+			.delete("/products/{id}", dependentProductId)
+		.then()
+			.statusCode(400);
+	}
+	
+	@Test
+	public void deleteShoultReturnForbidenWhenClientLogged() {
+		existProductId = 25L;
+		given()
+			.header("Authorization", "Bearer " + clientToken)
+		.when()
+			.delete("/products/{id}", existProductId)
+		.then()
+			.statusCode(403);
+	}
+	
+	@Test
+	public void deleteShoultReturnUnauthorizedWhenInvalidToken() {
+		existProductId = 25L;
+		given()
+			.header("Authorization", "Bearer " + invalidToken)
+		.when()
+			.delete("/products/{id}", existProductId)
 		.then()
 			.statusCode(401);
 	}

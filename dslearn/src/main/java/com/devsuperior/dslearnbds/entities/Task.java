@@ -12,11 +12,10 @@ public class Task extends Lesson {
 	private static final long serialVersionUID = 1L;
 	
 	private String description;
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Integer questionCount;
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Integer approvalCount;
 	private Double weight;
+	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant dueDate;
 	
 	public Task() {

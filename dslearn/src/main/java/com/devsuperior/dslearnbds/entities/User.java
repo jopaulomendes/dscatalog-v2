@@ -49,6 +49,10 @@ public class User implements Serializable {
 		this.password = password;
 		this.roles = roles;
 	}
+	
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
 
 	public Long getId() {
 		return id;
@@ -84,10 +88,6 @@ public class User implements Serializable {
 
 	public Set<Role> getRoles() {
 		return roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
 	}
 
 	public static long getSerialversionuid() {

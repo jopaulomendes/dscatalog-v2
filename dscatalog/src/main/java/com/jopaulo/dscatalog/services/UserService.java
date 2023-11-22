@@ -1,8 +1,8 @@
 package com.jopaulo.dscatalog.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,6 @@ import com.jopaulo.dscatalog.dto.UserInsertDTO;
 import com.jopaulo.dscatalog.dto.UserUpdatetDTO;
 import com.jopaulo.dscatalog.entities.Role;
 import com.jopaulo.dscatalog.entities.User;
-import com.jopaulo.dscatalog.projections.UserDetailsProjection;
 import com.jopaulo.dscatalog.repositories.RoleRepository;
 import com.jopaulo.dscatalog.repositories.UserRepository;
 import com.jopaulo.dscatalog.services.exceptions.DatabaseException;
@@ -31,6 +30,8 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService implements UserDetailsService {
+	
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(UserService.class);
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -115,17 +116,12 @@ public class UserService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		List<UserDetailsProjection> result = repository.searchUserAndRolesByEmail(username);
-		if (result.size() == 0) {
+		User user = repository.findByEmail(username);
+		if (user == null) {
+			logger.error("E-mail não encontrado: " + username);
 			throw new UsernameNotFoundException("E-mail não encontrado");
-		}
-		
-		User user = new User();
-		user.setEmail(username);
-		user.setPassword(result.get(0).getPassword());
-		for (UserDetailsProjection userDetailsProjection : result) {
-			user.addRole(new Role(userDetailsProjection.getRoleId(), userDetailsProjection.getAuthority()));
-		}
+		}		
+		logger.info("E-mail encontrado: " + username);
 		return user;
 	}
 

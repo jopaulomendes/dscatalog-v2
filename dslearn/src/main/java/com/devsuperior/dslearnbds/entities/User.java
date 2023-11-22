@@ -95,10 +95,6 @@ public class User implements UserDetails, Serializable {
 		return roles;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -145,5 +141,14 @@ public class User implements UserDetails, Serializable {
 	@Override
 	public boolean isEnabled() {
 		return true;
-	}
+	}	
+	
+	public boolean hasHole(String roleName) {
+		for (Role role : roles) {
+			if (role.getAuthority().equals(roleName)) {
+				return true;
+			}
+		}
+		return false;
+	}	
 }

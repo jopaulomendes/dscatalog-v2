@@ -32,7 +32,7 @@ public class EventResource {
 		return ResponseEntity.ok().body(list);
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
+//	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<EventDTO> insert(@Valid @RequestBody EventDTO dto){
 		dto = service.insert(dto);

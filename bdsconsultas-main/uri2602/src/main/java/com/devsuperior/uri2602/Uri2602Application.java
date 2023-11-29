@@ -24,11 +24,21 @@ public class Uri2602Application  implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		List<CustomerNameProjection> list = repository.name("RS");
+		List<CustomerNameProjection> list = repository.name1("rs");
 		List<CustomerDTO> result1 = list.stream().map(x -> new CustomerDTO(x)).collect(Collectors.toList());
 		
+		System.out.println("\n*** RESUTADO SQL RAIZ");
 		for (CustomerDTO customerNameProjection : result1) {
 			System.out.println(customerNameProjection);
 		}
+		System.out.println("\n**");
+		
+		List<CustomerDTO> result2 = repository.name2("rs");
+		
+		System.out.println("\n*** RESUTADO SQL SPQL");
+		for (CustomerDTO customerNameProjection : result2) {
+			System.out.println(customerNameProjection);
+		}
+		System.out.println("\n**");
 	}
 }

@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,12 @@ public class GenreService {
 
 	@Autowired
 	private GenreRepository repository;
+	
+	@Transactional(readOnly = true)
+	public Page<GenreDTO> findAllPage(Pageable pageable){
+		Page<Genre> page = repository.findAll(pageable);
+		return page.map(x -> new GenreDTO(x));
+	}
 	
 	@Transactional(readOnly = true)
 	public List<GenreDTO> findAll(){
